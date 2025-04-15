@@ -26,6 +26,9 @@ class Product
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $price = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image = null;
+
     public function getShopifyId(): string
     {
         return $this->shopifyId;
@@ -83,6 +86,17 @@ class Product
     {
         $this->price = $price;
 
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
         return $this;
     }
 }

@@ -23,6 +23,7 @@ class ShopifyWebhookController extends AbstractController
             return new JsonResponse(['error' => 'Signature ou secret manquant'], 401);
         }
         $calculatedHmac = base64_encode(hash_hmac('sha256', $rawBody, $webhookSecret, true));
+        var_dump($calculatedHmac);
         if (!hash_equals($hmacHeader, $calculatedHmac)) {
             return new JsonResponse(['error' => 'Signature HMAC invalide'], 401);
         }

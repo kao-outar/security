@@ -32,6 +32,10 @@ class ProductController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $name = $data['name'] ?? null;
         $price = $data['price'] ?? null;
+        $image = null;
+        if ($isAdmin || $this->isGranted('ROLE_PREMIUM')) {
+            $image = $data['image'] ?? null;
+        }
 
         if (!$name || !is_numeric($price)) {
             return new JsonResponse(['error' => 'Invalid data'], 400);
@@ -76,6 +80,7 @@ class ProductController extends AbstractController
             $product->setCreatedBy($user);
             $product->setName($name);
             $product->setPrice((float) $price);
+            $product->setImage($image);
 
             $em->persist($product);
             $em->flush();
