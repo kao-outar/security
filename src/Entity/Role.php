@@ -26,6 +26,9 @@ class Role
     #[ORM\Column]
     private ?bool $can_get_users = null;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $can_post_products = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -78,5 +81,16 @@ class Role
     public function getNom(): ?string
     {
         return $this->name;
+    }
+
+    public function getCanPostProducts(): ?bool
+    {
+        return $this->can_post_products;
+    }
+
+    public function setCanPostProducts(?bool $can_post_products): self
+    {
+        $this->can_post_products = $can_post_products;
+        return $this;
     }
 }

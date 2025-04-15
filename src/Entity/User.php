@@ -81,7 +81,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 return ['ROLE_' . strtoupper($nom)];
             }
         }
-
         return ['ROLE_USER'];
     }
 

@@ -21,7 +21,11 @@ class ProductController extends AbstractController
     ): JsonResponse {
         $user = $security->getUser();
 
-        if (!$user || !$this->isGranted('ROLE_ADMIN')) {
+        $role = $user ? $user->getRole() : null;
+        $canPost = $role && $role->getCanPostProducts();
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+
+        if (!$user || (!$isAdmin && !$canPost)) {
             return new JsonResponse(['error' => 'Forbidden'], 403);
         }
 
@@ -124,6 +128,32 @@ class ProductController extends AbstractController
                 'name' => $product->getName(),
                 'price' => $product->getPrice(),
                 'sales_count' => $product->getSalesCount()
+            ];
+        }, $products);
+
+        return new JsonResponse($data);
+    }
+
+    #[Route('/my-bestsellers', name: 'my_bestsellers', methods: ['GET'])]
+    public function getMyBestsellers(Security $security, EntityManagerInterface $em): JsonResponse
+    {
+        $user = $security->getUser();
+        if (!$user || !$this->isGranted('ROLE_PREMIUM')) {
+            return new JsonResponse(['error' => 'Premium uniquement'], 403);
+        }
+
+        $products = $em->getRepository(Product::class)->findBy(
+            ['createdBy' => $user],
+            ['salesCount' => 'DESC']
+        );
+
+        $data = array_map(function (Product $product) {
+            return [
+                'shopify_id' => $product->getShopifyId(),
+                'name' => $product->getName(),
+                'price' => $product->getPrice(),
+                'sales_count' => $product->getSalesCount(),
+                'image' => $product->getImage()
             ];
         }, $products);
 
