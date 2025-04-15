@@ -6,6 +6,12 @@
 parameters:
 
 services:
+    App\Security\JWTUserChecker:
+        tags: ['monolog.logger']
+
+    lexik_jwt_authentication.security.user_checker:
+        alias: App\Security\JWTUserChecker
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -19,6 +25,9 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\EventListener\PermissionMiddleware:
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

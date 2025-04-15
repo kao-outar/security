@@ -26,13 +26,12 @@ class RegisterController extends AbstractController
         $user->setEmail($data['email']);
         $user->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
 
-        // 🔥 Ajout : lien avec un rôle
-        if (isset($data['role_id'])) {
-            $role = $em->getRepository(Role::class)->find($data['role_id']);
-            if ($role) {
-                $user->setRole($role);
-            }
+        // ✅ On force le rôle USER
+        $defaultRole = $em->getRepository(Role::class)->findOneBy(['name' => 'USER']);
+        if (!$defaultRole) {
+            return new JsonResponse(['error' => 'Le rôle USER est introuvable en base.'], 500);
         }
+        $user->setRole($defaultRole);
 
         $em->persist($user);
         $em->flush();
