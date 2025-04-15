@@ -3,12 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Role;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 
 class RegisterController extends AbstractController
 {
@@ -25,6 +25,14 @@ class RegisterController extends AbstractController
         $user->setName($data['name']);
         $user->setEmail($data['email']);
         $user->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
+
+        // 🔥 Ajout : lien avec un rôle
+        if (isset($data['role_id'])) {
+            $role = $em->getRepository(Role::class)->find($data['role_id']);
+            if ($role) {
+                $user->setRole($role);
+            }
+        }
 
         $em->persist($user);
         $em->flush();
